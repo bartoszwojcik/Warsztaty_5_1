@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+    <title>{% block title %}{% endblock %} | Bell-Ringer</title>
+    {% endblock %}
+</head>
+    <body>
+        <h1>Bell-Ringer</h1>
+        <span class="login-register-span">
+            {% if request.user.is_authenticated == True %}
+                Hello, {{request.user.first_name}}!
+                <a href="{% url 'logout' %}">Log Out</a>
+            {% else %}
+                <a href="{% url 'register' %}">Sign Up</a>
+                <a href="{% url 'login' %}">Log In</a>
+            {% endif %}
+        </span>
+        <p></p>
+        <div class="add-bell-ring">
+            <a href="{% url 'ring-a-bell' %}">Ring a bell!</a>
+        </div>
+        <div id="content">
+            <p></p>
+            {% block content %}
+            <table class="main-table">
+                <thead>
+
+                </thead>
+                <tbody>
+                    {% for bell_ring in bell_rings %}
+                        {% include 'base/single_bell_ring.html' %}
+                    {% empty %}
+                    <tr><td>No bell-rings.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endblock %}
+        </div>
+    </body>
+</html>
