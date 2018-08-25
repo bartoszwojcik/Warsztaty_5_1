@@ -1,11 +1,14 @@
-from django import forms
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin, \
+    PermissionRequiredMixin
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.db import IntegrityError
+from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
-from django.views.generic import TemplateView, CreateView, FormView
+from django.views.generic import TemplateView, FormView
 
 from twitter.forms import AddBellRingForm, RegisterForm, LoginForm
 from twitter.models import Tweet
@@ -20,7 +23,7 @@ class HomeView(View):
             request,
             "base.html",
             {
-                "bell_rings": Tweet.objects.all().order_by("-creation_date")
+                "bell_rings": Tweet.objects.all().order_by("-creation_date"),
             }
         )
 
@@ -32,7 +35,8 @@ class LoginView(FormView):
 
     def form_valid(self, form):
         user = authenticate(
-            username=form.cleaned_data["login"],
+            username=form.cleaned_data["login"].split("@")[0],
+            email=form.cleaned_data["login"],
             password=form.cleaned_data["password"]
         )
         if user is not None:
@@ -65,21 +69,29 @@ class RegisterView(FormView):
     def form_valid(self, form):
         if form.cleaned_data["password"] \
                 == form.cleaned_data["password_repeated"]:
-            User.objects.create_user(
-                username=form.cleaned_data["username"],
-                password=form.cleaned_data["password"],
-                first_name=form.cleaned_data["username"],
-                email=form.cleaned_data["username"]
-            )
+
+            try:
+                User.objects.create_user(
+                    username=form.cleaned_data["email"].split("@")[0],
+                    password=form.cleaned_data["password"],
+                    email=form.cleaned_data["email"]
+                )
+            except IntegrityError:
+                return self.render_to_response(self.get_context_data(
+                    form=form,
+                    error="User with that e-mail already exists."
+                ))
+
             user_to_login = User.objects.get(
-                username=form.cleaned_data["username"]
+                username=form.cleaned_data["email"].split("@")[0]
             )
             login(self.request, user_to_login)
             return redirect(reverse("home"))
+
         else:
             return self.render_to_response(self.get_context_data(
                 form=form,
-                pass_error="Hasło nie jest zgodne."
+                error="Passwords do not match."
             ))
 
     def form_invalid(self, form):
@@ -91,7 +103,8 @@ class RegisterView(FormView):
 
 # Add a bell-ring (tweet)
 
-class AddBellRingView(View):
+class AddBellRingView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = "add_tweet"
 
     def get(self, request):
         form = AddBellRingForm()
@@ -111,3 +124,36 @@ class AddBellRingView(View):
                     'form': form
                 }
             )
+
+
+class UserBellsView(TemplateView):
+    template_name = "base.html"
+
+    def get_context_data(self, *args, **kwargs):
+        try:
+            author_data = User.objects.get(pk=kwargs["pk"])
+        except:
+            return Http404
+
+        context = super(UserBellsView, self).get_context_data(*args, **kwargs)
+        context["bell_rings"] = Tweet.objects.filter(
+            author=author_data
+        ).order_by(
+            "-creation_date"
+        )
+        context["title"] = author_data.username + "'s Bell-Rings"
+        return context
+
+
+class BellRingView(TemplateView):
+    template_name = "base/single_bell_ring.html"
+
+    def get_context_data(self, *args, **kwargs):
+        try:
+            bell_ring_data = Tweet.objects.get(pk=kwargs["pk"])
+        except:
+            return Http404
+
+        context = super(BellRingView, self).get_context_data(*args, **kwargs)
+        context["bell_ring"] = bell_ring_data
+        return context

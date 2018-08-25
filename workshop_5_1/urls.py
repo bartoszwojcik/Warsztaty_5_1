@@ -16,13 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from twitter.views import HomeView, AddBellRingView, LoginView, logout_view,\
-    RegisterView
+    RegisterView, UserBellsView, BellRingView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r"^$", HomeView.as_view(), name="home"),
-    re_path(r"^ring-a-bell/$", AddBellRingView.as_view(), name="ring-a-bell"),
     re_path(r"^login/$", LoginView.as_view(), name="login"),
     re_path(r"^logout/$", logout_view, name="logout"),
     re_path(r"^register/$", RegisterView.as_view(), name="register"),
+
+    re_path(
+        r"^ring-a-bell/$", AddBellRingView.as_view(), name="ring-a-bell"
+    ),
+    re_path(
+        r"^users/(?P<pk>(\d)+)$", UserBellsView.as_view(), name="user-bells"
+    ),
+    re_path(
+        r"^bell-rings/(?P<pk>(\d)+)$", BellRingView.as_view(), name="bell-ring"
+    )
 ]

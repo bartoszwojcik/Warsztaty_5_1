@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.core.validators import EmailValidator
 from django.forms import ModelForm
 
 from twitter.models import Tweet
@@ -15,22 +14,19 @@ class RegisterForm(ModelForm):
     password_repeated = forms.CharField(
         max_length=128,
         widget=forms.PasswordInput,
-        label="Powtórz hasło",
-        help_text=f"""Sugeruje się aby hasło miało cztery litery,
-         zaczynało się na d i kończyło na a"""
+        label="Repeat password",
     )
 
     class Meta:
         model = User
-        fields = ("username", "password")
-        labels = {"username": "Nazwa użytkownika",
-                  "password": "Hasło",
+        fields = ("email", "password")
+        labels = {"email": "Your e-mail",
+                  "password": "Password",
                   }
         widgets = {"password": forms.PasswordInput}
-        validators = {"username": EmailValidator}
 
     field_order = (
-        "username",
+        "email",
         "password",
         "password_repeated",
     )
@@ -39,8 +35,8 @@ class RegisterForm(ModelForm):
 class AddBellRingForm(forms.ModelForm):
     class Meta:
         model = Tweet
-        fields = ['content']
+        fields = ["content"]
         widgets = {
-            'content': forms.Textarea(),
+            "content": forms.Textarea(),
         }
 

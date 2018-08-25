@@ -1,0 +1,22 @@
+<table class="main-table">
+    <thead>
+        <tr>
+            <td>
+                <h3>
+                    {% if title %}
+                        {% block title %}{{title}}{% endblock %}
+                    {% else %}
+                        Latest Bells
+                    {% endif %}
+                </h3>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bell_ring in bell_rings %}
+            {% include 'base/single_bell_ring.html' %}
+        {% empty %}
+        <tr><td>No bell-rings.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
