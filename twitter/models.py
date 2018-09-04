@@ -8,3 +8,8 @@ class Tweet(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.SET_DEFAULT, default="Removed"
     )
+
+
+# class Message(models.Model):
+#     content = models.CharField(max_length=)
+
