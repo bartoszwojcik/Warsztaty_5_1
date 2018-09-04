@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('auth', '0009_alter_user_last_name_max_length'),
-        ('twitter', '0002_emailuser'),
+        ('messaging', '0002_emailuser'),
     ]
 
     operations = [

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from twitter.views import HomeView, AddBellRingView, LoginView, logout_view,\
+from messaging.views import HomeView, AddBellRingView, LoginView, logout_view,\
     RegisterView, UserBellsView, BellRingView
 
 urlpatterns = [

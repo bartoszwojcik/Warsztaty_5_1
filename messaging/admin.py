@@ -1,5 +1,5 @@
 from django.contrib import admin
-from twitter.models import Tweet
+from messaging.models import Tweet
 
 
 @admin.register(Tweet)

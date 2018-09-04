@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from twitter.models import Tweet
+from messaging.models import Tweet
 
 
 class LoginForm(forms.Form):

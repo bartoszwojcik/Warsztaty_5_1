@@ -10,8 +10,8 @@ from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import TemplateView, FormView
 
-from twitter.forms import AddBellRingForm, RegisterForm, LoginForm
-from twitter.models import Tweet
+from messaging.forms import AddBellRingForm, RegisterForm, LoginForm
+from messaging.models import Tweet
 
 
 # Main views
