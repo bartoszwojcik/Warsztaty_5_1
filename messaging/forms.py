@@ -40,3 +40,10 @@ class AddBellRingForm(forms.ModelForm):
             "content": forms.Textarea(),
         }
 
+
+class NewPMessageForm(forms.ModelForm):
+    pass
+
+
+class NewCommentForm(forms.ModelForm):
+    pass

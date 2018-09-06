@@ -3,12 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
-from django.views.generic import TemplateView, FormView, ListView
+from django.views.generic import TemplateView, FormView, ListView, DetailView
 
 from messaging.forms import AddBellRingForm, RegisterForm, LoginForm
 from messaging.models import Tweet, PrivateMessage
@@ -162,11 +163,49 @@ class BellRingView(TemplateView):
         return context
 
 
-class UserPMessagesView(ListView):
-
+class UserPMessagesView(LoginRequiredMixin, ListView):
+    template_name = "user-pmessages.html"
     model = PrivateMessage
     paginate_by = 10
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     return context
+    # ToDo: Should check if user has access to these messages
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['messages'] = PrivateMessage.objects.filter(
+            Q(sender=self.kwargs["pk"])
+            | Q(recipient=self.kwargs["pk"])
+        ).distinct().order_by("-creation_date")
+
+        return context
+
+
+class SinglePMessageView(LoginRequiredMixin, DetailView):
+    model = PrivateMessage
+    opening_user = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.opening_user = request.user
+        return super().dispatch(request, *args, **kwargs)
+
+    # ToDo: Should check if user has access to this message
+
+    def get_context_data(self, **kwargs):
+        this_message = PrivateMessage.objects.get(pk=self.kwargs["pk"])
+        if self.opening_user == this_message.recipient:
+            this_message.read_status = True
+            this_message.save()
+
+        context = super().get_context_data(**kwargs)
+        self.opening_user = None
+        return context
+
+
+class NewPMessageView(LoginRequiredMixin, FormView):
+    pass
+
+# ToDo: Authentication
+# ToDo: User editing: information and password. Only theirs,
+# ToDo: Only login and user creation accessible without login
+# ToDo: Tasks 4, 5, 6

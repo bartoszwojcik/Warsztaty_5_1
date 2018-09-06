@@ -11,10 +11,14 @@ This project is unfinished yet.
 * Single user views
 * Features accessed after authentication
 * Permissions
+* View with all private messages
+* Message unread status, changing only when viewed as recipient
 
 To be added:
 * Adding comments
-* Sending adn reading private messages between users
+* Sending and reading private messages between users
+
+Warning: Access to personal features is currently not restricted by protection against editing html.
 
 # Author
 Bartosz Wójcik

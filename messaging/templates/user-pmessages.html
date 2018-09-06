@@ -6,13 +6,29 @@
 <h2>Private messages</h2>
 
 <ul>
-{% for message in user_messages %}
+{% for message in messages %}
     <li>
-        From: {{ message.sender }} To: {{ message.recipient }}
-        {% if message.read_status == True %}
-            Unread!
-        {% endif %}
-        {{message.content_short}}
+        <p>
+            From:
+            <a href="{% url 'user-bells' pk=message.sender.id %}">
+                {{ message.sender }}
+            </a>
+            To:
+            <a href="{% url 'user-bells' pk=message.recipient.id %}">
+                {{ message.recipient }}
+            </a>
+        </p>
+        <p>
+            Sent: {{ message.creation_date }}
+            {% if message.read_status == False %}
+            <strong>Unread!</strong>
+            {% endif %}
+        </p>
+        <p>
+            <a href="{% url 'single-pmessage' pk=message.id %}">
+            {{message.content_short}}
+            </a>
+        </p>
     </li>
 {% empty %}
     <li>No messages.</li>

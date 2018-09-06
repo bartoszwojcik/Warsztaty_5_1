@@ -10,8 +10,15 @@ class Tweet(models.Model):
     )
 
 
-# class Comment(models.Model):
-#     content = models.CharField(max_length=)
+class Comment(models.Model):
+    content = models.CharField(max_length=60)
+    tweet = models.ForeignKey(
+        Tweet, on_delete=models.CASCADE
+    )
+    creation_date = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(
+        User, on_delete=models.SET_DEFAULT, default="Removed"
+    )
 
 
 class PrivateMessage(models.Model):
@@ -33,4 +40,7 @@ class PrivateMessage(models.Model):
 
     @property
     def content_short(self):
-        return self.content[:30]
+        if len(self.content) > 30:
+            return self.content[:30] + "..."
+        else:
+            return self.content

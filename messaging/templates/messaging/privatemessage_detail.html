@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}message{% endblock %}
+{% block content %}
+    <h2>Private message</h2>
+    <p>From:
+        <a href="{% url 'user-bells' pk=object.sender.id %}">
+            {{ object.sender }}
+        </a>
+    </p>
+    <p>
+        To:
+        <a href="{% url 'user-bells' pk=object.recipient.id %}">
+            {{ object.recipient }}
+        </a>
+    </p>
+    <p>
+        Sent: {{ object.creation_date }}
+    </p>
+    <p>Content:</p>
+    <p>
+        {{object.content_short}}
+    </p>
+{% endblock %}

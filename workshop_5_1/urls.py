@@ -16,10 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from messaging.views import HomeView, AddBellRingView, LoginView, logout_view,\
-    RegisterView, UserBellsView, BellRingView, UserPMessagesView
+    RegisterView, UserBellsView, BellRingView, UserPMessagesView,\
+    SinglePMessageView, NewPMessageView
 
 urlpatterns = [
-    
+
     # Main views
     path('admin/', admin.site.urls),
     re_path(r"^$", HomeView.as_view(), name="home"),
@@ -46,4 +47,17 @@ urlpatterns = [
         UserPMessagesView.as_view(),
         name="user-pmessages"
     ),
+
+    # Message views
+    re_path(
+        r"^messages/(?P<pk>(\d)+)/?$",
+        SinglePMessageView.as_view(),
+        name="single-pmessage"
+    ),
+    re_path(
+        r"^new-message/?$",
+        NewPMessageView.as_view(),
+        name="new-message"
+    ),
+
 ]
