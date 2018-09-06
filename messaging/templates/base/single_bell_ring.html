@@ -1,6 +1,10 @@
 <tr>
     <td>
-        <span class="bell-ring-author">{{bell_ring.author}}</span>
+        <span class="bell-ring-author">
+            <a href="{% url 'user-bells' pk=bell_ring.author.id %}">
+            {{bell_ring.author}}
+            </a>
+        </span>
         <span class="bell-ring-creation-date">{{bell_ring.creation_date}}</span>
         <span class="bell-ring-link">
             <a href="{% url 'bell-ring' pk=bell_ring.id %}">

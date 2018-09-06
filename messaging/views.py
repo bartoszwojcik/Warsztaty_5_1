@@ -8,10 +8,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView
 
 from messaging.forms import AddBellRingForm, RegisterForm, LoginForm
-from messaging.models import Tweet
+from messaging.models import Tweet, PrivateMessage
 
 
 # Main views
@@ -71,7 +71,7 @@ class RegisterView(FormView):
                 == form.cleaned_data["password_repeated"]:
 
             try:
-                User.objects.create_user(
+                new_user = User.objects.create_user(
                     username=form.cleaned_data["email"].split("@")[0],
                     password=form.cleaned_data["password"],
                     email=form.cleaned_data["email"]
@@ -81,6 +81,9 @@ class RegisterView(FormView):
                     form=form,
                     error="User with that e-mail already exists."
                 ))
+
+            # Add permissions by adding user to a group
+            new_user.groups.add(name="standard_users")
 
             user_to_login = User.objects.get(
                 username=form.cleaned_data["email"].split("@")[0]
@@ -104,7 +107,7 @@ class RegisterView(FormView):
 # Add a bell-ring (tweet)
 
 class AddBellRingView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    permission_required = "add_tweet"
+    permission_required = "messaging.add_tweet"
 
     def get(self, request):
         form = AddBellRingForm()
@@ -157,3 +160,13 @@ class BellRingView(TemplateView):
         context = super(BellRingView, self).get_context_data(*args, **kwargs)
         context["bell_ring"] = bell_ring_data
         return context
+
+
+class UserPMessagesView(ListView):
+
+    model = PrivateMessage
+    paginate_by = 10
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     return context

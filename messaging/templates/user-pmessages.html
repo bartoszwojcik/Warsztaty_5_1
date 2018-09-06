@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+     Private messages
+{% endblock %}
+{% block content %}
+<h2>Private messages</h2>
+
+<ul>
+{% for message in user_messages %}
+    <li>
+        From: {{ message.sender }} To: {{ message.recipient }}
+        {% if message.read_status == True %}
+            Unread!
+        {% endif %}
+        {{message.content_short}}
+    </li>
+{% empty %}
+    <li>No messages.</li>
+{% endfor %}
+</ul>
+    {% if error %}
+        {{error}}
+    {% endif %}
+
+{% endblock %}

@@ -10,7 +10,9 @@
         <h1>Bell-Ringer</h1>
         <span class="login-register-span">
             {% if request.user.is_authenticated == True %}
-                Hello, {{request.user.username}}!
+                Hello, <a href="{% url 'user-bells' pk=request.user.id %}">
+            {{request.user.username}}
+        </a>!
                 <a href="{% url 'logout' %}">Log Out</a>
             {% else %}
                 <a href="{% url 'register' %}">Sign Up</a>

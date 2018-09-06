@@ -8,6 +8,9 @@ This project is unfinished yet.
 * User registration and login
 * Single message view
 * Adding new messages
+* Single user views
+* Features accessed after authentication
+* Permissions
 
 To be added:
 * Adding comments
