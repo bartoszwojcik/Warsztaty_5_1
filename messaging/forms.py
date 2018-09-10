@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from messaging.models import Tweet
+from messaging.models import Tweet, PrivateMessage
 
 
 class LoginForm(forms.Form):
@@ -42,7 +42,12 @@ class AddBellRingForm(forms.ModelForm):
 
 
 class NewPMessageForm(forms.ModelForm):
-    pass
+    class Meta:
+        model = PrivateMessage
+        fields = ["content"]
+        widgets = {
+            "content": forms.Textarea(),
+        }
 
 
 class NewCommentForm(forms.ModelForm):

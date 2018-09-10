@@ -55,7 +55,7 @@ urlpatterns = [
         name="single-pmessage"
     ),
     re_path(
-        r"^new-message/?$",
+        r"^new-message/(?P<pk>(\d)+)/?$",
         NewPMessageView.as_view(),
         name="new-message"
     ),

@@ -19,13 +19,15 @@
                 <a href="{% url 'login' %}">Log In</a>
             {% endif %}
         </span>
-        <p></p>
+        <div>
+            <p></p>
         {% if request.user.is_authenticated == True %}
             <div class="add-bell-ring">
                 <a href="{% url 'ring-a-bell' %}">Ring a bell!</a>
                 <a href="{% url 'user-pmessages' pk=request.user.id %}">Show private messages</a>
             </div>
         {% endif %}
+        </div>
         <div id="content">
             <p></p>
             {% block content %}

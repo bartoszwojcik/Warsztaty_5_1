@@ -4,14 +4,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin, \
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import TemplateView, FormView, ListView, DetailView
 
-from messaging.forms import AddBellRingForm, RegisterForm, LoginForm
+from messaging.forms import AddBellRingForm, RegisterForm, LoginForm, \
+    NewPMessageForm
 from messaging.models import Tweet, PrivateMessage
 
 
@@ -168,7 +169,13 @@ class UserPMessagesView(LoginRequiredMixin, ListView):
     model = PrivateMessage
     paginate_by = 10
 
-    # ToDo: Should check if user has access to these messages
+    def dispatch(self, request, *args, **kwargs):
+        if str(request.user.pk) == self.kwargs["pk"]:
+            return super(UserPMessagesView, self).dispatch(
+                    request, *args, **kwargs
+                )
+        else:
+            return HttpResponseForbidden('Forbidden.')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -184,26 +191,40 @@ class UserPMessagesView(LoginRequiredMixin, ListView):
 class SinglePMessageView(LoginRequiredMixin, DetailView):
     model = PrivateMessage
     opening_user = None
+    this_message = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.opening_user = request.user
-        return super().dispatch(request, *args, **kwargs)
+        self.this_message = PrivateMessage.objects.get(pk=self.kwargs["pk"])
 
-    # ToDo: Should check if user has access to this message
+        if self.this_message.recipient == request.user \
+                or self.this_message.sender == request.user:
+            self.opening_user = request.user
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden('Forbidden.')
 
     def get_context_data(self, **kwargs):
-        this_message = PrivateMessage.objects.get(pk=self.kwargs["pk"])
-        if self.opening_user == this_message.recipient:
-            this_message.read_status = True
-            this_message.save()
+        # this_message = PrivateMessage.objects.get(pk=self.kwargs["pk"])
+        if self.opening_user == self.this_message.recipient:
+            self.this_message.read_status = True
+            self.this_message.save()
 
+        self.this_message = None
         context = super().get_context_data(**kwargs)
         self.opening_user = None
         return context
 
 
 class NewPMessageView(LoginRequiredMixin, FormView):
-    pass
+    model = NewPMessageForm
+
+    # Maybe instead of context data, just send view.kwargs.pk to template?
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context["recipient"] =
+        return context
+
+    # ToDo: On save, add user data as sender
 
 # ToDo: Authentication
 # ToDo: User editing: information and password. Only theirs,
