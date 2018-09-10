@@ -6,7 +6,7 @@
                     {% if title %}
                         {% block title %}{{title}}{% endblock %}
                         {% if request.user.pk|slugify != view.kwargs.pk %}
-                            <button href="{% url 'new-message' pk=view.kwargs.pk %}">Send PM</button>
+                            <a href="{% url 'new-message' pk=view.kwargs.pk %}">Send PM</a>
                         {% endif %}
                     {% else %}
                         Latest Bells

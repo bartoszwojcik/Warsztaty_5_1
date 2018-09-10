@@ -13,10 +13,13 @@ This project is unfinished yet.
 * Permissions
 * View with all private messages
 * Message unread status, changing only when viewed as recipient
+* Sending and reading private messages between users; without being able to send messages to yourself
+* Every page requires login, except the main page, login and registration
+* Admin page with registered tweets (posts), comments, private messages
 
 To be added:
 * Adding comments
-* Sending and reading private messages between users
+* Password reset
 
 Warning: Access to personal features is currently not restricted by protection against editing html.
 

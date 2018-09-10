@@ -22,7 +22,7 @@ class Comment(models.Model):
 
 
 class PrivateMessage(models.Model):
-    content = models.TextField()
+    content = models.TextField(null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     sender = models.ForeignKey(
         User,

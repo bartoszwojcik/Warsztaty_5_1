@@ -131,7 +131,7 @@ class AddBellRingView(LoginRequiredMixin, PermissionRequiredMixin, View):
             )
 
 
-class UserBellsView(TemplateView):
+class UserBellsView(LoginRequiredMixin, TemplateView):
     template_name = "base.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class UserBellsView(TemplateView):
         return context
 
 
-class BellRingView(TemplateView):
+class BellRingView(LoginRequiredMixin, TemplateView):
     template_name = "base/single_bell_ring.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -216,17 +216,33 @@ class SinglePMessageView(LoginRequiredMixin, DetailView):
 
 
 class NewPMessageView(LoginRequiredMixin, FormView):
-    model = NewPMessageForm
+    template_name = 'new_pmessage.html'
+    form_class = NewPMessageForm
+    success_url = reverse_lazy("home")
 
-    # Maybe instead of context data, just send view.kwargs.pk to template?
+    def dispatch(self, request, *args, **kwargs):
+        if self.kwargs["pk"] != str(request.user.id):
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return HttpResponseForbidden(
+                'You cannot send a message to yourself.'
+            )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context["recipient"] =
+        context["recipient"] = User.objects.get(pk=self.kwargs["pk"])
         return context
 
-    # ToDo: On save, add user data as sender
+    def form_valid(self, form):
+        PrivateMessage.objects.create(
+            sender=self.request.user,
+            recipient=User.objects.get(pk=self.kwargs["pk"]),
+            content=form.cleaned_data["content"],
+            read_status=False
+        )
+        return super(NewPMessageView, self).form_valid(form)
 
-# ToDo: Authentication
+
 # ToDo: User editing: information and password. Only theirs,
 # ToDo: Only login and user creation accessible without login
-# ToDo: Tasks 4, 5, 6
+# ToDo: Tasks 5, 6
