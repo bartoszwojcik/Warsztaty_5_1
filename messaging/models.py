@@ -9,6 +9,20 @@ class Tweet(models.Model):
         User, on_delete=models.SET_DEFAULT, default="Removed"
     )
 
+    def __str__(self):
+        return str(self.id)
+
+    @property
+    def content_short(self):
+        if len(self.content) > 30:
+            return self.content[:30] + "..."
+        else:
+            return self.content
+
+    @property
+    def comment_count(self):
+        return Comment.objects.filter(tweet=self).count()
+
 
 class Comment(models.Model):
     content = models.CharField(max_length=60)
@@ -19,6 +33,13 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.SET_DEFAULT, default="Removed"
     )
+
+    @property
+    def content_short(self):
+        if len(self.content) > 30:
+            return self.content[:30] + "..."
+        else:
+            return self.content
 
 
 class PrivateMessage(models.Model):
