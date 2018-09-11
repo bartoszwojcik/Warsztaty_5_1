@@ -12,5 +12,8 @@
             </a>
         </span>
         <div class="bell-ring-content">{{bell_ring.content}}</div>
+        {% if request.user.is_authenticated == True %}
+            <a href="">Add comment</a>
+        {% endif %}
     </td>
 </tr>
