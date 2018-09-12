@@ -12,8 +12,8 @@ from django.views import View
 from django.views.generic import TemplateView, FormView, ListView, DetailView
 
 from messaging.forms import AddBellRingForm, RegisterForm, LoginForm, \
-    NewPMessageForm
-from messaging.models import Tweet, PrivateMessage
+    NewPMessageForm, NewCommentForm
+from messaging.models import Tweet, PrivateMessage, Comment
 
 
 # Main views
@@ -150,18 +150,34 @@ class UserBellsView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class BellRingView(LoginRequiredMixin, TemplateView):
+class BellRingView(LoginRequiredMixin, FormView):
     template_name = "base/single_bell_ring.html"
+    form_class = NewCommentForm
+    success_url = ""
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super(BellRingView, self).get_context_data(**kwargs)
         try:
-            bell_ring_data = Tweet.objects.get(pk=kwargs["pk"])
+            context["bell_ring"] = Tweet.objects.get(pk=self.kwargs["pk"])
         except:
             return Http404
 
-        context = super(BellRingView, self).get_context_data(*args, **kwargs)
-        context["bell_ring"] = bell_ring_data
+        context["single"] = True
+
         return context
+
+    def form_valid(self, form):
+        Comment.objects.create(
+            author=self.request.user,
+            tweet=Tweet.objects.get(pk=self.kwargs["pk"]),
+            content=form.cleaned_data["content"]
+        )
+
+        self.success_url = reverse_lazy(
+            "bell-ring", kwargs={"pk": self.kwargs["pk"]}
+        )
+
+        return super(BellRingView, self).form_valid(form)
 
 
 class UserPMessagesView(LoginRequiredMixin, ListView):
@@ -204,7 +220,6 @@ class SinglePMessageView(LoginRequiredMixin, DetailView):
             return HttpResponseForbidden('Forbidden.')
 
     def get_context_data(self, **kwargs):
-        # this_message = PrivateMessage.objects.get(pk=self.kwargs["pk"])
         if self.opening_user == self.this_message.recipient:
             self.this_message.read_status = True
             self.this_message.save()

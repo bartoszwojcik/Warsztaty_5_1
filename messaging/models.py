@@ -41,6 +41,9 @@ class Comment(models.Model):
         else:
             return self.content
 
+    class Meta:
+        ordering = ["-creation_date"]
+
 
 class PrivateMessage(models.Model):
     content = models.TextField(null=True)

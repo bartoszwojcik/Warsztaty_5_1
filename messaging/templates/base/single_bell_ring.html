@@ -12,8 +12,34 @@
             </a>
         </span>
         <div class="bell-ring-content">{{bell_ring.content}}</div>
-        {% if request.user.is_authenticated == True %}
-            <a href="">Add comment</a>
+        <div>
+            <span>
+                Comments: {{bell_ring.comment_count}}
+            </span>
+        </div>
+        {% if single is True %}
+            <div>
+                <form action="#" method="post">
+                        {% csrf_token %}
+                        {{ form }}
+                    <input type="submit" value="Add">
+                </form>
+            </div>
+            <div>
+                <p>Comments:</p>
+                <ul>
+                    {% for comment in bell_ring.comment_set.all %}
+                        <li>
+                            <div>
+                                <p>{{comment.author}} {{comment.creation_date}}</p>
+                                <p>{{comment.content}}</p>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <p>None.</p>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endif %}
     </td>
 </tr>

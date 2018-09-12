@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from messaging.models import Tweet, PrivateMessage
+from messaging.models import Tweet, PrivateMessage, Comment
 
 
 class LoginForm(forms.Form):
@@ -51,4 +51,9 @@ class NewPMessageForm(forms.ModelForm):
 
 
 class NewCommentForm(forms.ModelForm):
-    pass
+    class Meta:
+        model = Comment
+        fields = ["content"]
+        labels = {
+            "content": "Add comment"
+        }
