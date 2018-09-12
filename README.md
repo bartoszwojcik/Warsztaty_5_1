@@ -16,10 +16,12 @@ This project is unfinished yet.
 * Sending and reading private messages between users; without being able to send messages to yourself
 * Every page requires login, except the main page, login and registration
 * Admin page with registered tweets (posts), comments, private messages
+* Adding comments and comment count
+* Password change for logged-in user
 
 To be added:
-* Adding comments
-* Password reset
+* Optional, disabled by default, flag for posts, comments and messages
+* Admin actions for blocking visibility of posts, comments and messages
 
 Warning: Access to personal features is currently not restricted by protection against editing html.
 

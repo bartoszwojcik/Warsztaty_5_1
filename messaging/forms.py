@@ -57,3 +57,22 @@ class NewCommentForm(forms.ModelForm):
         labels = {
             "content": "Add comment"
         }
+
+
+class ResetPasswordForm(ModelForm):
+    password_repeated = forms.CharField(
+        max_length=128,
+        widget=forms.PasswordInput,
+        label="Repeat password",
+    )
+
+    class Meta:
+        model = User
+        fields = ("password", )
+        labels = {"password": "Password"}
+        widgets = {"password": forms.PasswordInput}
+
+    field_order = (
+        "password",
+        "password_repeated",
+    )

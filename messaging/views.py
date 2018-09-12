@@ -12,7 +12,7 @@ from django.views import View
 from django.views.generic import TemplateView, FormView, ListView, DetailView
 
 from messaging.forms import AddBellRingForm, RegisterForm, LoginForm, \
-    NewPMessageForm, NewCommentForm
+    NewPMessageForm, NewCommentForm, ResetPasswordForm
 from messaging.models import Tweet, PrivateMessage, Comment
 
 
@@ -97,6 +97,40 @@ class RegisterView(FormView):
             return self.render_to_response(self.get_context_data(
                 form=form,
                 error="Passwords do not match."
+            ))
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(
+            form=form,
+            error=form.errors
+        ))
+
+
+class ResetPasswordView(LoginRequiredMixin, FormView):
+    template_name = 'reset_password.html'
+    form_class = ResetPasswordForm
+    success_url = reverse_lazy("home")
+
+    def dispatch(self, request, *args, **kwargs):
+        if str(request.user.pk) == self.kwargs["pk"]:
+            return super(ResetPasswordView, self).dispatch(
+                    request, *args, **kwargs
+                )
+        else:
+            return HttpResponseForbidden('Forbidden.')
+
+    def form_valid(self, form):
+        if form.cleaned_data["password"] \
+                == form.cleaned_data["password_repeated"]:
+            user_data = User.objects.get(pk=self.kwargs["pk"])
+            user_data.set_password(form.cleaned_data["password"])
+            user_data.save()
+            login(self.request, user_data)
+            return redirect(reverse("home"))
+        else:
+            return self.render_to_response(self.get_context_data(
+                form=form,
+                pass_error="Passwords do not match."
             ))
 
     def form_invalid(self, form):

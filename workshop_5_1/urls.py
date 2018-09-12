@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from messaging.views import HomeView, AddBellRingView, LoginView, logout_view,\
-    RegisterView, UserBellsView, BellRingView, UserPMessagesView,\
-    SinglePMessageView, NewPMessageView
+from messaging.views import HomeView, AddBellRingView, LoginView, logout_view, \
+    RegisterView, UserBellsView, BellRingView, UserPMessagesView, \
+    SinglePMessageView, NewPMessageView, ResetPasswordView
 
 urlpatterns = [
 
@@ -27,6 +27,11 @@ urlpatterns = [
     re_path(r"^login/?$", LoginView.as_view(), name="login"),
     re_path(r"^logout/?$", logout_view, name="logout"),
     re_path(r"^register/?$", RegisterView.as_view(), name="register"),
+    re_path(
+        r"^reset_password/(?P<pk>(\d)+)$",
+        ResetPasswordView.as_view(),
+        name="reset-password"
+    ),
 
 
     re_path(
