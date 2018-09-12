@@ -25,7 +25,9 @@ class HomeView(View):
             request,
             "base.html",
             {
-                "bell_rings": Tweet.objects.all().order_by("-creation_date"),
+                "bell_rings": Tweet.objects.filter(
+                    blocked=False
+                ).order_by("-creation_date"),
             }
         )
 
@@ -176,7 +178,8 @@ class UserBellsView(LoginRequiredMixin, TemplateView):
 
         context = super(UserBellsView, self).get_context_data(*args, **kwargs)
         context["bell_rings"] = Tweet.objects.filter(
-            author=author_data
+            author=author_data,
+            blocked=False
         ).order_by(
             "-creation_date"
         )
@@ -291,7 +294,3 @@ class NewPMessageView(LoginRequiredMixin, FormView):
         )
         return super(NewPMessageView, self).form_valid(form)
 
-
-# ToDo: User editing: information and password. Only theirs,
-# ToDo: Only login and user creation accessible without login
-# ToDo: Tasks 5, 6

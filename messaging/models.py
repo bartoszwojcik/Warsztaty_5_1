@@ -8,6 +8,7 @@ class Tweet(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.SET_DEFAULT, default="Removed"
     )
+    blocked = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id)
@@ -33,6 +34,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.SET_DEFAULT, default="Removed"
     )
+    blocked = models.BooleanField(default=False)
 
     @property
     def content_short(self):
@@ -61,6 +63,7 @@ class PrivateMessage(models.Model):
         related_name="message_recipient"
     )
     read_status = models.BooleanField()     # True for read, False for unread
+    blocked = models.BooleanField(default=False)
 
     @property
     def content_short(self):

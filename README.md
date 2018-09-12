@@ -22,6 +22,8 @@ This project is unfinished yet.
 To be added:
 * Optional, disabled by default, flag for posts, comments and messages
 * Admin actions for blocking visibility of posts, comments and messages
+* Blocked posts, comments and messages are filtered out
+* Blocked posts are inaccessible through URL
 
 Warning: Access to personal features is currently not restricted by protection against editing html.
 
