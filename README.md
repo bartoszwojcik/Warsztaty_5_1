@@ -27,6 +27,25 @@ To be added:
 
 Warning: Access to personal features is currently not restricted by protection against editing html.
 
+# Sample screenshots
+
+Message List (Index, Logged out)
+
+![Message List](screenshots/message-list.png)
+
+Single Message with Comments
+
+![Single Message with Comments](screenshots/message-with-comments.png)
+
+Private Messages
+
+![Private Messages](screenshots/private-messages.png)
+
+Message Administration (Django Admin)
+
+![Message Administration](screenshots/message-admin.png)
+
+
 # Author
 Bartosz Wójcik
 bartosz.wojcik@bartvessh.com
