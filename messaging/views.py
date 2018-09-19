@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -236,7 +236,7 @@ class UserPMessagesView(LoginRequiredMixin, ListView):
         context['messages'] = PrivateMessage.objects.filter(
             Q(sender=self.kwargs["pk"])
             | Q(recipient=self.kwargs["pk"])
-        ).distinct().order_by("-creation_date")
+        ).filter(blocked=False).distinct().order_by("-creation_date")
 
         return context
 

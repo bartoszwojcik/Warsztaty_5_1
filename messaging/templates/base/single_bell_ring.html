@@ -1,3 +1,4 @@
+{% load filter_blocked %}
 <tr>
     <td>
         <span class="bell-ring-author">
@@ -28,7 +29,7 @@
             <div>
                 <p>Comments:</p>
                 <ul>
-                    {% for comment in bell_ring.comment_set.all %}
+                    {% for comment in bell_ring.comment_set.all|filter_comments %}
                         <li>
                             <div>
                                 <p>{{comment.author}} {{comment.creation_date}}</p>

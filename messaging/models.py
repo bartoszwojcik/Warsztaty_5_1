@@ -22,7 +22,8 @@ class Tweet(models.Model):
 
     @property
     def comment_count(self):
-        return Comment.objects.filter(tweet=self).count()
+        # Counts only non-blocked
+        return Comment.objects.filter(tweet=self, blocked=False).count()
 
 
 class Comment(models.Model):
