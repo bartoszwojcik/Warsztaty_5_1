@@ -1,8 +1,6 @@
 # 'Bell-Ringer', a Twitter-like messaging application
 1-day bootcamp workshop, done using Python, Django, SQL. It is a web twitter-like application used for posting messages, commenting them and sending private messages between users.
 
-This project is unfinished yet.
-
 # Main features
 * Main site with all recent messages
 * User registration and login
@@ -19,12 +17,10 @@ This project is unfinished yet.
 * Adding comments and comment count
 * Password change for logged-in user
 * Optional, disabled by default, flag for posts, comments and messages marking them as blocked
-* Blocked posts, comments and messages are filtered out
-
-To be added:
+* Custom template filters for blocked posts, comments and messages
 * Admin actions for blocking visibility of posts, comments and messages
 * Blocked posts are inaccessible through URL
-* Account removal
+* Account removal by users, setting default "Removed" for remaining posts and messages
 
 Warning: Access to personal features is currently not restricted by protection against editing html.
 

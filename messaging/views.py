@@ -4,15 +4,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin, \
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import render, redirect
+from django.http import Http404, HttpResponseForbidden, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import TemplateView, FormView, ListView, DetailView
 
 from messaging.forms import AddBellRingForm, RegisterForm, LoginForm, \
-    NewPMessageForm, NewCommentForm, ResetPasswordForm
+    NewPMessageForm, NewCommentForm, ResetPasswordForm, AccountRemovalForm
 from messaging.models import Tweet, PrivateMessage, Comment
 
 
@@ -142,6 +142,22 @@ class ResetPasswordView(LoginRequiredMixin, FormView):
         ))
 
 
+class AccountRemovalView(LoginRequiredMixin, FormView):
+    template_name = "account_removal.html"
+    form_class = AccountRemovalForm
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        if self.request.user.check_password(form.cleaned_data["password"]):
+            self.request.user.delete()
+            return redirect(reverse("home"))
+        else:
+            return self.render_to_response(self.get_context_data(
+                form=form,
+                pass_error="Password incorrect."
+            ))
+
+
 # Add a bell-ring (tweet)
 
 class AddBellRingView(LoginRequiredMixin, PermissionRequiredMixin, View):
@@ -191,16 +207,24 @@ class BellRingView(LoginRequiredMixin, FormView):
     template_name = "base/single_bell_ring.html"
     form_class = NewCommentForm
     success_url = ""
+    bell_ring = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.bell_ring = get_object_or_404(Tweet, pk=self.kwargs["pk"])
+
+        if self.bell_ring.blocked is False:
+            return super(BellRingView, self).dispatch(
+                    request, *args, **kwargs
+                )
+        else:
+            return HttpResponse(
+                "This bell ring has been blocked by administrator."
+            )
 
     def get_context_data(self, **kwargs):
         context = super(BellRingView, self).get_context_data(**kwargs)
-        try:
-            context["bell_ring"] = Tweet.objects.get(pk=self.kwargs["pk"])
-        except:
-            return Http404
-
+        context["bell_ring"] = self.bell_ring
         context["single"] = True
-
         return context
 
     def form_valid(self, form):
@@ -247,7 +271,14 @@ class SinglePMessageView(LoginRequiredMixin, DetailView):
     this_message = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.this_message = PrivateMessage.objects.get(pk=self.kwargs["pk"])
+        self.this_message = get_object_or_404(
+            PrivateMessage, pk=self.kwargs["pk"]
+        )
+
+        if self.this_message.blocked is True:
+            return HttpResponse(
+                "This message has been blocked by administrator."
+            )
 
         if self.this_message.recipient == request.user \
                 or self.this_message.sender == request.user:

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}
+     Remove account
+{% endblock %}
+{% block content %}
+<h3>Remove {{request.user.username}} account:</h3>
+    {% if pass_error %}
+        <p>{{pass_error}}</p>
+    {% endif %}
+    {% if error %}
+        {% for error in errors %}
+            {{error}}
+        {% endfor %}
+    {% endif %}
+    <form action="{% url 'account-removal' %}" method="post">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Remove account">
+    </form>
+{% endblock %}

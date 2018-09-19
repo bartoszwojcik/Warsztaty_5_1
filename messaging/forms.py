@@ -59,7 +59,7 @@ class NewCommentForm(forms.ModelForm):
         }
 
 
-class ResetPasswordForm(ModelForm):
+class ResetPasswordForm(forms.ModelForm):
     password_repeated = forms.CharField(
         max_length=128,
         widget=forms.PasswordInput,
@@ -76,3 +76,11 @@ class ResetPasswordForm(ModelForm):
         "password",
         "password_repeated",
     )
+
+
+class AccountRemovalForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("password", )
+        labels = {"password": "Password"}
+        widgets = {"password": forms.PasswordInput}

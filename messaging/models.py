@@ -6,7 +6,7 @@ class Tweet(models.Model):
     content = models.CharField(max_length=140)
     creation_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
-        User, on_delete=models.SET_DEFAULT, default="Removed"
+        User, on_delete=models.SET_DEFAULT, default=User.objects.get(pk=2)
     )
     blocked = models.BooleanField(default=False)
 
@@ -33,7 +33,7 @@ class Comment(models.Model):
     )
     creation_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
-        User, on_delete=models.SET_DEFAULT, default="Removed"
+        User, on_delete=models.SET_DEFAULT, default=User.objects.get(pk=2)
     )
     blocked = models.BooleanField(default=False)
 
@@ -54,13 +54,13 @@ class PrivateMessage(models.Model):
     sender = models.ForeignKey(
         User,
         on_delete=models.SET_DEFAULT,
-        default="Removed",
+        default=User.objects.get(pk=2),
         related_name="message_sender"
     )
     recipient = models.ForeignKey(
         User,
         on_delete=models.SET_DEFAULT,
-        default="Removed",
+        default=User.objects.get(pk=2),
         related_name="message_recipient"
     )
     read_status = models.BooleanField()     # True for read, False for unread

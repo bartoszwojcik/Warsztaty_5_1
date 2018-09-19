@@ -26,6 +26,7 @@
             <div class="add-bell-ring">
                 <a href="{% url 'ring-a-bell' %}">Ring a bell!</a>
                 <a href="{% url 'user-pmessages' pk=request.user.id %}">Show private messages</a>
+                <a href="{% url 'account-removal' %}">Remove your account</a>
             </div>
         {% endif %}
         </div>

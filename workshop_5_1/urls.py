@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, re_path
 from messaging.views import HomeView, AddBellRingView, LoginView, logout_view, \
     RegisterView, UserBellsView, BellRingView, UserPMessagesView, \
-    SinglePMessageView, NewPMessageView, ResetPasswordView
+    SinglePMessageView, NewPMessageView, ResetPasswordView, AccountRemovalView
 
 urlpatterns = [
 
@@ -31,6 +31,11 @@ urlpatterns = [
         r"^reset_password/(?P<pk>(\d)+)$",
         ResetPasswordView.as_view(),
         name="reset-password"
+    ),
+    re_path(
+        r"^account-removal/?$",
+        AccountRemovalView.as_view(),
+        name="account-removal"
     ),
 
 
